@@ -1,3 +1,7 @@
+from math import log10, sqrt
+from typing import List, Any
+
+
 def FirstChar(variable_name: str) -> bool:
     if variable_name:
         first_char = variable_name[0]
@@ -63,3 +67,78 @@ def mediaTempRang(temps: list) -> float | int:
         return -1
     median = float(sum(valid_temps)) / float(len(valid_temps))
     return round(median, 2)
+
+
+def SPL_dB(P):
+    """ Calcula Sound Pressure Level en dB: 20log(x/20) x en microPascales
+    """
+    return 20 * log10(P / 20)
+
+
+def detect2ndNdB(lst: list, N: float) -> int:
+    upper_sounds_in_db = [x for x in lst if SPL_dB(x) >= N]
+    if len(upper_sounds_in_db) < 2:
+        return -1
+    return upper_sounds_in_db[1]
+
+
+def es_primo(n):
+    if n <= 1: return False
+    for d in range(2, int(sqrt(n)) + 1):
+        if n % d == 0:
+            return False
+    return True
+
+
+def primoPitagoric2(lst: list) -> int | list[int]:
+    pitagoric_primes = [x for x in lst if x % 4 == 1 and es_primo(x)]
+    if len(pitagoric_primes) < 2:
+        return -1
+    return pitagoric_primes[0:2]
+
+
+def contar_pos(m: list[list]) -> int:
+    positives = 0
+    for row in m:
+        for i in row:
+            if i > 0:
+                positives += 1
+    return positives
+
+
+def mas_denso(planetas: list)-> str :
+    max_density=00.0
+    most_dense_planet=""
+    for planet in planetas:
+        d = float(planet[1])/float(planet[2])
+        if d > max_density:
+            max_density=d
+            most_dense_planet = planet[0]
+    return  most_dense_planet
+
+
+class Jugador():
+
+    def __init__(self, *args):
+        self.number = args[0]
+        self.name = args[1]
+        self.community = args[2]
+        self.age = args[3]
+        self.distance = args[4:]
+
+    def is_community(self):
+        return self.community
+
+    def median_distance(self):
+        return float(sum(self.distance))/float(len(self.distance))
+
+    def is_valid(self,minimun_distance):
+        return  self.is_community() and self.median_distance() > minimun_distance
+
+def jugComKm(lst:list[list], x:float)->list[str]:
+    jugadores = []
+    for i in lst:
+        jugadores.append(Jugador(*i))
+    jugadores_validos = [jugador.name for jugador in jugadores if jugador.is_valid(x)]
+    jugadores_validos.sort()
+    return jugadores_validos
